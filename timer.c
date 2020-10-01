@@ -8,7 +8,7 @@
 #include <inttypes.h>
 #include <math.h>
 #include <sys/ioctl.h>
-
+#include"cfun.h"
 /*** data ***/
 struct editorConfig {
   struct termios orig_termios;
@@ -44,7 +44,7 @@ void setTerminalConfig() {
 
 void resetScreen() {
 	system("clear");
-	//printf("%s\n", "Welcome to the timer, press [SPACE] to start/stop!");
+	pc_magenta("yuh\n");
 }
 
 int editorReadKey() {
@@ -59,12 +59,10 @@ int editorReadKey() {
 void setToCenter() {
 	struct winsize ws;
 	ioctl(0, TIOCGWINSZ, &ws);
-	for (int i = 0; i < ws.ws_col/2; i+=1) {
+	for (int i = 0; i < ws.ws_col/2; i++) {
 		printf("%s"," ");
 	}
-	for (int j = 0; j < ws.ws_row/2; j+=1) {
-		printf("%s","\n\r");
-	}
+
 }
 /*** timer logic ***/
 
@@ -79,19 +77,26 @@ void endTimer() {
 
 /*** i/o ***/
 
+void readTimesFile() {
+	ptr = fopen("/Users/louismeunier/dev/c:c++/timer/test/.txt","r+");
+	fclose(fptr);
+	
+}
+
 void eraseLine() {
-	printf("\r          ");
+	printf("\r         ");
+	fflush(stdout);
 }
 
 /*** main ***/
 
 int main() {
-	
-	//printf("\e[?25l");
+
+	printf("\e[?25l");
 	setTerminalConfig();
 	resetScreen();
 	//printf("%s\n\r", "place" );
-	printf("\n");
+	//printf("\n");
 	timerOn = 0;
 	while (editorReadKey()!='q') {
 
@@ -103,7 +108,9 @@ int main() {
 				
 				//printf("\r%c[2K", 27);
 				eraseLine();
-				printf("%s", "solve");
+				setToCenter();
+				printf("\r%s", "solve");
+				fflush(stdout);
 
 			} else {
 				endTimer();
@@ -113,8 +120,8 @@ int main() {
 				float final_t = trunc_t/100;
 				//printf("\r%c[2K", 27);
 				eraseLine();
-				printf("%.6g", final_t);
-				
+				printf("\r%.6g", final_t);
+				fflush(stdout);
 				timerOn = 0;
 			}			
 
