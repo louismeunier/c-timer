@@ -49,7 +49,7 @@ void pc_blue(char* arg) {
 void pc_bblue(char* arg) {
 	printf("\033[1;34m");
 	printf("%s",arg);
-	printf("\033[0m;");
+	printf("\033[0m");
 } 
 
 void pc_magenta(char* arg) {
