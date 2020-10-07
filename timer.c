@@ -9,7 +9,7 @@
 #include <math.h>
 #include <sys/ioctl.h>
 #include <string.h>
-
+#include "scramble.h"
 
 /*** data ***/
 
@@ -96,6 +96,11 @@ float endTimer() {
 	return final_t;
 }
 
+void printScramble() {
+
+	printf("\r");
+	generate_basic_scramble();
+}
 /*** i/o ***/
 
 void writeTime(float num) {
@@ -123,7 +128,13 @@ void readTime() {
 }
 
 void eraseLine() {
-	printf("\r                         ");
+	struct winsize ws;
+	ioctl(0,TIOCGWINSZ,&ws);
+	//char buff[ws.ws_row];
+	printf("\r");
+	for (int i=0;i<ws.ws_col;i++)
+		printf(" ");
+
 	fflush(stdout);
 }
 
@@ -191,7 +202,10 @@ void calcAO5() {
 /*** timer cmds***/
 void toggleCMD() {
 	eraseLine();
-	printf("\r%s","cmd toggled..." );
+	printf("\033[0;31m");
+	setToCenter(sizeof("cmd"));
+	printf("%s","cmd" );
+	printf("\033[0m");
 	fflush(stdout);
 	sysDia = abs(sysDia-1);
 }
@@ -214,10 +228,11 @@ int main() {
 			if (editorReadKey()==' ') {
 				if (timerOn == 0) {
 					startTimer();
-					
-					eraseLine();
 
-					printf("\r%s", "solve");
+					eraseLine();
+					
+					setToCenter(sizeof("solve"));
+					printf("%s", "solve");
 					fflush(stdout);
 	
 				} else {
@@ -225,13 +240,18 @@ int main() {
 					
 					eraseLine();
 					addToAO5(final_t);
-
-					printf("\r%.6g", final_t);
+					setToCenter(sizeof(final_t));
+					printf("%.6g", final_t);
 					fflush(stdout);
 	
 					timerOn = 0;
 				}			
 	
+			} 
+			else if (editorReadKey()=='s') {
+				eraseLine();
+				printScramble();
+				fflush(stdout);
 			}
 		} else {
 			if (editorReadKey()=='r') {
